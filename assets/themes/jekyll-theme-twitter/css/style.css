@@ -1,0 +1,93 @@
+/* Override some defaults */
+/*html, body {
+	background-color: #F8F8F8;
+}*/
+body {
+	padding-top: 70px;
+}
+
+.blog-navbar {
+	text-shadow: 0 -1px 0 rgba(0,0,0,.15);
+	background-color: #563d7c;
+	border-color: #463265;
+	box-shadow: 0 1px 0 rgba(255,255,255,.1);
+}
+
+.blog-navbar .navbar-nav > .active > a, .blog-navbar .navbar-nav > .active > a:hover {
+	color: #fff;
+	background-color: #463265;
+}
+
+.navbar-inverse .navbar-brand {
+	color: #fff;
+}
+
+/* pre code============================================================ */
+pre {
+	background-color: #f7f7f9;
+}
+
+/* tag_box ======================================================== */
+.tag_box {
+	list-style: none;
+	margin: 0;
+	padding: 5px 0 ;
+	overflow: hidden;
+}
+.tag_box li {
+	line-height: 28px;
+}
+.tag_box.inline li {
+	float: left;
+}
+.tag_box a {
+	padding: 4px 5px;
+	margin: 2px;
+	color: #005F6B;
+	background: #E7E7E7;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+	text-decoration: none;
+}
+.tag_box a span{
+	vertical-align: super;
+	font-size: 0.8em;
+}
+.tag_box a.active {
+	background: #57A957;
+	border: 1px solid #4C964D;
+	color: #FFF;
+}
+
+/* footer======================================================== */
+.footer {
+	text-align: left;
+	padding-top: 40px;
+	padding-bottom: 30px;
+	margin-top: 100px;
+	color: #777;
+	border-top: 1px solid #e5e5e5;
+}
+
+.social {
+	text-align: left;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.social-buttons {
+	display: inline-block;
+	margin-bottom: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.social-buttons li:first-child {
+	padding-left: 0;
+}
+
+.social-buttons li {
+	display: inline-block;
+	line-height: 1;
+	padding: 5px 8px;
+}
