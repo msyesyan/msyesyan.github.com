@@ -73,13 +73,6 @@ title: Export Trello
     }
   };
 
-  if (!Trello.authorized()) {
-    Trello.authorize({
-      type: "popup",
-      name: settings.applicationName
-    });
-  }
-
   boardId = settings.boardId;
 
   initList = function() {
@@ -141,7 +134,14 @@ title: Export Trello
 
   Trello.authorize({
     interactive: false,
-    success: initList()
+    success: initList,
+    error: function() {
+      Trello.authorize({
+        type: "popup",
+        name: settings.applicationName,
+        success: initList
+      });
+    }
   });
 </script>
 </html>
