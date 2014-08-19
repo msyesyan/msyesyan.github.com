@@ -1,0 +1,147 @@
+---
+title: Export Trello
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ExportTrello</title>
+  <!-- <meta content="authenticity_token" name="csrf-param" /> -->
+  <!-- <meta content="GJk5QB+LXKX1xex6FmdeTJQan1B1yBS1yy8MssIMej0=" name="csrf-token" /> -->
+  <style type="text/css" media="screen">
+    body {
+      background: #23719F;
+    }
+    body #lists {
+      margin: 40px 0px 0px 78px;
+      padding: 10px 20px;
+      width: 220px;
+      height: 600px;
+      overflow-y: scroll;
+      background: #e3e3e3;
+      border-radius: 5px;
+    }
+    body .list {
+      width: 200px;
+      height: 60px;
+      background: #fff;
+      border-radius: 3px;
+      border: 1px solid #cccccc;
+      line-height: 60px;
+      margin-bottom: 5px;
+      padding-left: 20px;
+    }
+    body .list.active {
+      background: #969696;
+    }
+    body .list:hover {
+      cursor: pointer;
+    }
+    body #output {
+      position: fixed;
+      top: 40px;
+      left: 380px;
+      width: 880px;
+      border-radius: 5px;
+      background: #eee;
+      padding: 10px 20px;
+      height: 600px;
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+<body>
+
+<div id="lists">
+</div>
+<div id="output"></div>
+</body>
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
+<script type="text/javascript">
+  var boardId, initList;
+
+  settings = {
+    applicationName: "ExportTrelloToWeekPapers",
+    key: "9115435cc98b67a65c3a6dcff606cb09",
+    boardId: "KDFzTG2T",
+    i18n: {
+      hh: "健康到家",
+      zbh: "闸北医疗",
+      ngb: "智慧闵行",
+      cam: "智能摄像头"
+    }
+  };
+
+  if (!Trello.authorized()) {
+    Trello.authorize({
+      type: "popup",
+      name: settings.applicationName
+    });
+  }
+
+  boardId = settings.boardId;
+
+  initList = function() {
+    $("#list").empty();
+    return Trello.boards.get(boardId, { lists: "open" }, function(board) {
+      var list, _i, _len, _ref;
+      $("<h4/>").html("Lists of " + board.name).appendTo('#lists');
+      _ref = board.lists;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        list = _ref[_i];
+        $("<div/>", {
+          "class": "list",
+          "data-id": list.id,
+          text: list.name
+        }).appendTo("#lists");
+      }
+      return $(".list").click(function() {
+        $("#output").html("loading....");
+        $(this).addClass("active").siblings().removeClass("active");
+        return Trello.lists.get($(this).data("id"), {
+          cards: "open"
+        }, function(list) {
+          var card, cardContent, content, project, projectKeyTitle, projects, _j, _len1, _ref1, _results;
+          projects = {};
+          _ref1 = list.cards;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            card = _ref1[_j];
+            projectKeyTitle = card.name.match(/\{(.*)}/)[1];
+            if (!projects[projectKeyTitle]) {
+              projects[projectKeyTitle] = [];
+            }
+            projects[projectKeyTitle].push($.trim(card.name.replace(/\{.*\}|\(.*\)|\[.*\]/g, "")));
+          }
+          $("#output").empty();
+          _results = [];
+          for (project in projects) {
+            $("<h2 />", {
+              text: settings.i18n[project] || project
+            }).appendTo("#output");
+            _results.push((function() {
+              var _k, _len2, _ref2, _results1;
+              _ref2 = projects[project];
+              _results1 = [];
+              for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+                cardContent = _ref2[_k];
+                content = cardContent.match(/解决|问题|修复|无效|错误/g) ? "[解决] " + cardContent : "[完成] " + cardContent;
+                _results1.push($("<div/>", {
+                  text: content
+                }).appendTo("#output"));
+              }
+              return _results1;
+            })());
+          }
+          return _results;
+        });
+      });
+    });
+  };
+
+  Trello.authorize({
+    interactive: false,
+    success: initList()
+  });
+</script>
+</html>
