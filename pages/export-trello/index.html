@@ -48,17 +48,32 @@ title: Export Trello
       height: 600px;
       overflow-y: scroll;
     }
+    .actions {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .actions a {
+      color: #fff;
+    }
   </style>
 </head>
 <body>
-
-<div id="lists">
-</div>
-<div id="output"></div>
+  <div id="lists">
+  </div>
+  <div id="output"></div>
+  <div class="actions">
+    <a href="#" id="login">登陆Trello</a>
+    <a href="#" id="logout">注销Trello</a>
+  </div>
 </body>
+
 <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
 <script>
+  $("#logout").toggle(Trello.authorized());
+  $("#login").toggle(!Trello.authorized());
+
   var boardId, initList, settings;
 
   settings = {
@@ -152,16 +167,29 @@ title: Export Trello
     });
   };
 
-  Trello.authorize({
-    interactive: false,
-    success: initList,
-    error: function() {
-      return Trello.authorize({
-        type: "popup",
-        name: settings.applicationName,
-        success: initList
-      });
-    }
+  $("#login").click(function(event) {
+    event.stopPropagation();
+    Trello.authorize({
+      type: "popup",
+      name: settings.applicationName,
+      success: function() {
+        $("#logout").toggle(Trello.authorized());
+        $("#login").toggle(!Trello.authorized());
+        initList();
+      }
+    });
+  });
+
+  $("#logout").click(function(event) {
+    event.stopPropagation();
+
+    Trello.deauthorize();
+
+    $("#lists").empty();
+    $("#out").empty();
+
+    $("#logout").toggle(Trello.authorized());
+    $("#login").toggle(!Trello.authorized());
   });
 </script>
 </html>
