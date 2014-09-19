@@ -58,8 +58,8 @@ title: Export Trello
 </body>
 <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
-<script type="text/javascript">
-  var boardId, initList;
+<script>
+  var boardId, initList, settings;
 
   settings = {
     applicationName: "ExportTrelloToWeekPapers",
@@ -69,7 +69,17 @@ title: Export Trello
       hh: "健康到家",
       zbh: "闸北医疗",
       ngb: "智慧闵行",
-      cam: "智能摄像头"
+      cam: "智能摄像头",
+      zgav: "张江视听",
+      hxl: "沪杏图书馆"
+    },
+    labels: {
+      green: "追加",
+      yellow: "等待",
+      orange: "讨论",
+      red: "失败",
+      purple: "待定",
+      blue: "解决"
     }
   };
 
@@ -77,9 +87,11 @@ title: Export Trello
 
   initList = function() {
     $("#list").empty();
-    return Trello.boards.get(boardId, { lists: "open" }, function(board) {
+    return Trello.boards.get(boardId, {
+      lists: "open"
+    }, function(board) {
       var list, _i, _len, _ref;
-      $("<h4/>").html("Lists of " + board.name).appendTo('#lists');
+      $("<h2/>").html("Lists of " + board.name).appendTo('#lists');
       _ref = board.lists;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         list = _ref[_i];
@@ -95,7 +107,7 @@ title: Export Trello
         return Trello.lists.get($(this).data("id"), {
           cards: "open"
         }, function(list) {
-          var card, cardContent, content, project, projectKeyTitle, projects, _j, _len1, _ref1, _results;
+          var card, content, label, project, projectKeyTitle, projects, _j, _len1, _ref1, _results;
           projects = {};
           _ref1 = list.cards;
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -104,7 +116,7 @@ title: Export Trello
             if (!projects[projectKeyTitle]) {
               projects[projectKeyTitle] = [];
             }
-            projects[projectKeyTitle].push($.trim(card.name.replace(/\{.*\}|\(.*\)|\[.*\]/g, "")));
+            projects[projectKeyTitle].push(card);
           }
           $("#output").empty();
           _results = [];
@@ -117,8 +129,13 @@ title: Export Trello
               _ref2 = projects[project];
               _results1 = [];
               for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-                cardContent = _ref2[_k];
-                content = cardContent.match(/解决|问题|修复|无效|错误/g) ? "[解决] " + cardContent : "[完成] " + cardContent;
+                card = _ref2[_k];
+                label = "完成";
+                if (card.labels[0]) {
+                  label = settings.labels[card.labels[0].color];
+                }
+                content = $.trim(card.name.replace(/\{.*\}|\(.*\)|\[.*\]/g, ""));
+                content = "[" + label + "]" + " " + content;
                 _results1.push($("<div/>", {
                   text: content
                 }).appendTo("#output"));
@@ -129,6 +146,8 @@ title: Export Trello
           return _results;
         });
       });
+    }, function(error) {
+      return alert(error);
     });
   };
 
@@ -136,7 +155,7 @@ title: Export Trello
     interactive: false,
     success: initList,
     error: function() {
-      Trello.authorize({
+      return Trello.authorize({
         type: "popup",
         name: settings.applicationName,
         success: initList
