@@ -9,6 +9,7 @@ settings =
       cam: "智能摄像头"
       zgav: "张江视听"
       hxl: "沪杏图书馆"
+      mportal: "NGBLab"
     labels:
       green: "追加"
       yellow: "等待"
