@@ -1,0 +1,18 @@
+<div ng-switch="authorized()">
+  <div ng-switch-when="true">
+    <div class="panel panel-default" ng-repeat="organization in TrelloService.organizations">
+      <div class="panel-heading">
+        {( organization.name )}
+      </div>
+      <div class="panel-body">
+        <div class="col-sm-3" ng-repeat="board in organization.boards">
+          <div class="alert alert-success">
+            {( board.name )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

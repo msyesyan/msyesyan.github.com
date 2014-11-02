@@ -1,0 +1,60 @@
+body {
+  /*padding-top: 40px;*/
+  /*padding-bottom: 40px;*/
+  /*background-color: #eee;*/
+}
+
+.form-signin {
+  /*max-width: 330px;*/
+  /*padding: 15px;*/
+  /*margin: 0 auto;*/
+}
+
+
+/*body {
+      background: #23719F;
+    }
+    body #lists {
+      margin: 40px 0px 0px 78px;
+      padding: 10px 20px;
+      width: 220px;
+      height: 600px;
+      overflow-y: scroll;
+      background: #e3e3e3;
+      border-radius: 5px;
+    }
+    body .list {
+      width: 200px;
+      height: 60px;
+      background: #fff;
+      border-radius: 3px;
+      border: 1px solid #cccccc;
+      line-height: 60px;
+      margin-bottom: 5px;
+      padding-left: 20px;
+    }
+    body .list.active {
+      background: #969696;
+    }
+    body .list:hover {
+      cursor: pointer;
+    }
+    body #output {
+      position: fixed;
+      top: 40px;
+      left: 380px;
+      width: 880px;
+      border-radius: 5px;
+      background: #eee;
+      padding: 10px 20px;
+      height: 600px;
+      overflow-y: scroll;
+    }
+    .actions {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .actions a {
+      color: #fff;
+    }*/
