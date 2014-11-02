@@ -7,12 +7,13 @@
       <div class="panel-body">
         <div class="col-sm-3" ng-repeat="board in organization.boards">
           <div class="alert alert-success">
-            {( board.name )}
+            <a href="" ng-click="lists(board.id)">{( board.name )}</a>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 
