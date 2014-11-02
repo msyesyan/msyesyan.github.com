@@ -1,16 +1,18 @@
-<h1 class="page-header">Lists</h1>
-<div class="row" ng-controller="ListsController">
-  <div class="col-sm-3">
-    <div class="list-group">
-      <a href="" ng-click="show(list.id)" class="list-group-item ng-class: { active: list.id == selectedListId}" ng-repeat="list in lists">
-        {( list.name )}
-      </a>
+<div class="container-fluid">
+  <h1 class="page-header">Lists</h1>
+  <div class="row" ng-controller="ListsController">
+    <div class="col-sm-3">
+      <div class="list-group">
+        <a href="" ng-click="show(list.id)" class="list-group-item ng-class: { active: list.id == selectedListId}" ng-repeat="list in lists">
+          {( list.name )}
+        </a>
+      </div>
     </div>
-  </div>
-  <div class="col-sm-9">
-    <div class="panel panel-default">
-      <div class="panel-heading"></div>
-      <div id="paper" class="panel-body"></div>
+    <div class="col-sm-9">
+      <div class="panel panel-default">
+        <div class="panel-heading"></div>
+        <div id="paper" class="panel-body"></div>
+      </div>
     </div>
   </div>
 </div>

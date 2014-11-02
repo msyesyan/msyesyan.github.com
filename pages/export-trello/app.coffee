@@ -9,22 +9,25 @@ ExportTrelloApp
 .config(['$routeProvider', '$locationProvider',
   ($routeProvider, $locationProvider) ->
     $routeProvider
-      .when '/dashboard',
-        templateUrl: 'partials/dashboard.html'
+      .when '/login',
+        templateUrl: 'partials/login.html'
         controller: 'MainController'
       .when '/boards',
         templateUrl: 'partials/boards.html'
         controller: 'BoardsController'
-      .when '/lists/',
+      .when '/lists',
         templateUrl: 'partials/lists.html'
         controller: 'ListsController'
       .otherwise
-        redirectTo: '/dashboard'
+        redirectTo: '/login'
 ])
 
 .factory('TrelloService', ['$http', '$cookieStore', ($http, $cookieStore) ->
   class TrelloService
     APIENDPOINT = "https://api.trello.com/1/"
+
+    @authorized = ->
+      !!@token()
 
     @token = ->
       $cookieStore.get("trelloToken")
@@ -49,26 +52,28 @@ ExportTrelloApp
 ])
 
 .controller('MainController', ['$scope', '$http', '$location', '$rootScope', 'TrelloService', ($scope, $http, $location, $rootScope, TrelloService) ->
+  $scope.username = null
   $scope.TrelloService = TrelloService
-  $scope.organizationName = "bstar"
-  window.TrelloService = TrelloService
 
-  $scope.authorized = -> Trello.authorized()
+  $scope.login = (okUrl) ->
+    TrelloService.setUser($scope.username)
 
-  $scope.authorize = ->
     Trello.authorize
       type: "popup"
       success: ->
-        # TrelloService.getDatas($scope.organizationName)
+        TrelloService.setToken()
+        $location.path okUrl || "/boards"
 
-  $scope.deauthorize = ->
+  $scope.logout = (okUrl) ->
     Trello.deauthorize()
+    TrelloService.setToken()
+    TrelloService.setUser(null)
+    $location.path okUrl || 'login'
 
-  $scope.getDatas = ->
-    TrelloService.getDatas($scope.organizationName)
+  $scope.authorized = ->
+    TrelloService.authorized()
 
-  $scope.lists = (id) ->
-    $location.path('/lists').search(boardId: id)
+  $location.path '/boards' if $scope.authorized()
 ])
 
 .controller('BoardsController', ['$scope', '$location', '$http', '$rootScope', 'TrelloService', ($scope, $location, $http, $rootScope, TrelloService) ->
@@ -83,7 +88,6 @@ ExportTrelloApp
 
   $scope.index()
 ])
-
 
 .controller('ListsController', ['$scope', '$location', '$http', '$rootScope', 'TrelloService', ($scope, $location, $http, $rootScope, TrelloService) ->
   $scope.board = null

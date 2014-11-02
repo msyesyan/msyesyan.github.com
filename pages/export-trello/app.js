@@ -8,17 +8,17 @@
     }
   ]).config([
     '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-      return $routeProvider.when('/dashboard', {
-        templateUrl: 'partials/dashboard.html',
+      return $routeProvider.when('/login', {
+        templateUrl: 'partials/login.html',
         controller: 'MainController'
       }).when('/boards', {
         templateUrl: 'partials/boards.html',
         controller: 'BoardsController'
-      }).when('/lists/', {
+      }).when('/lists', {
         templateUrl: 'partials/lists.html',
         controller: 'ListsController'
       }).otherwise({
-        redirectTo: '/dashboard'
+        redirectTo: '/login'
       });
     }
   ]).factory('TrelloService', [
@@ -30,6 +30,10 @@
         function TrelloService() {}
 
         APIENDPOINT = "https://api.trello.com/1/";
+
+        TrelloService.authorized = function() {
+          return !!this.token();
+        };
 
         TrelloService.token = function() {
           return $cookieStore.get("trelloToken");
@@ -65,29 +69,30 @@
     }
   ]).controller('MainController', [
     '$scope', '$http', '$location', '$rootScope', 'TrelloService', function($scope, $http, $location, $rootScope, TrelloService) {
+      $scope.username = null;
       $scope.TrelloService = TrelloService;
-      $scope.organizationName = "bstar";
-      window.TrelloService = TrelloService;
-      $scope.authorized = function() {
-        return Trello.authorized();
-      };
-      $scope.authorize = function() {
+      $scope.login = function(okUrl) {
+        TrelloService.setUser($scope.username);
         return Trello.authorize({
           type: "popup",
-          success: function() {}
+          success: function() {
+            TrelloService.setToken();
+            return $location.path(okUrl || "/boards");
+          }
         });
       };
-      $scope.deauthorize = function() {
-        return Trello.deauthorize();
+      $scope.logout = function(okUrl) {
+        Trello.deauthorize();
+        TrelloService.setToken();
+        TrelloService.setUser(null);
+        return $location.path(okUrl || 'login');
       };
-      $scope.getDatas = function() {
-        return TrelloService.getDatas($scope.organizationName);
+      $scope.authorized = function() {
+        return TrelloService.authorized();
       };
-      return $scope.lists = function(id) {
-        return $location.path('/lists').search({
-          boardId: id
-        });
-      };
+      if ($scope.authorized()) {
+        return $location.path('/boards');
+      }
     }
   ]).controller('BoardsController', [
     '$scope', '$location', '$http', '$rootScope', 'TrelloService', function($scope, $location, $http, $rootScope, TrelloService) {
