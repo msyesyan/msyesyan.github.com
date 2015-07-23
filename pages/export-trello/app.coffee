@@ -55,6 +55,9 @@ ExportTrelloApp
   $scope.username = null
   $scope.TrelloService = TrelloService
 
+  $scope.$watch TrelloService.authorized, (value) ->
+    $location.path okUrl || 'login' if value
+
   $scope.login = (okUrl) ->
     TrelloService.setUser($scope.username)
 
@@ -119,6 +122,13 @@ ExportTrelloApp
           text: content
         ).appendTo "#paper"
 
+  $scope.drawSimplePaper = ->
+    $("#paper").empty()
+
+    for card in $scope.cards
+      content = card.name
+      $("<div>", text: content).appendTo "#paper"
+
   $scope.index = ->
     TrelloService.lists($location.search().boardId).then (response) ->
       $scope.lists = response.data
@@ -129,7 +139,8 @@ ExportTrelloApp
     $scope.selectedListId = id
     TrelloService.cards(id).then (response) ->
       $scope.cards = response.data
-      $scope.drawPaper()
+      # $scope.drawPaper()
+      $scope.drawSimplePaper()
 
   $scope.index()
 ])
